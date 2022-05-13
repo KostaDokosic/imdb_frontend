@@ -38,7 +38,6 @@ import router from "../router";
     repassword: ''
   }
   function register() {
-    console.log(userData)
     store.dispatch('registerUser', userData)
         .then(() => {
           router.push({'name': 'Dashboard'})
