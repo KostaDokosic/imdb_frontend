@@ -15,12 +15,18 @@
 </template>
 
 <script setup>
+import store from "../store";
+import {useRouter} from "vue-router";
+const router = useRouter();
+
 const userData = {
   email: '',
   password: ''
 }
 function login() {
-  console.log('login')
+  store.dispatch('login', userData).then((res) => router.push({
+    name: 'Dashboard'
+  })).catch(e => store.commit('setInfoMessage', e.response.statusText))
 }
 </script>
 

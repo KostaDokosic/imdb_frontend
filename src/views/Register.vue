@@ -28,8 +28,8 @@
 
 <script setup>
 import store from "../store";
-import router from "../router";
-
+import {useRouter} from "vue-router";
+const router = useRouter();
   const userData = {
     first_name: '',
     last_name: '',
@@ -38,10 +38,9 @@ import router from "../router";
     repassword: ''
   }
   function register() {
-    store.dispatch('registerUser', userData)
-        .then(() => {
-          router.push({'name': 'Dashboard'})
-        })
+    store.dispatch('registerUser', userData).then((res) => router.push({
+      name: 'Dashboard'
+    })).catch(e => store.commit('setInfoMessage', e.response.statusText))
   }
 
   function validate() {
@@ -61,34 +60,5 @@ import router from "../router";
 </script>
 
 <style lang="scss" scoped>
-  .form_group {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-
-    label {
-      text-align: left;
-    }
-
-    input {
-      outline: none;
-      border: 1px solid gray;
-      padding: .5rem 1rem;
-    }
-
-    button {
-      box-shadow: none;
-      background: skyblue;
-      outline: none;
-      border: 1px solid gray;
-      color: white;
-      padding: .5rem 1rem;
-
-      &:hover {
-        background: lightblue;
-        cursor: pointer;
-      }
-    }
-  }
+@import '../assets/forms.scss';
 </style>

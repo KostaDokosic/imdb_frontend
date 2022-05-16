@@ -4,7 +4,7 @@ import axios from '../axios';
 const store = createStore({
     state: {
         user: {
-            token: sessionStorage.getItem('TOKEN'),
+            token: sessionStorage.getItem('TOKEN') ?? null,
             data: JSON.parse(sessionStorage.getItem('USER'))
         },
         infoMessage: ''
@@ -16,9 +16,17 @@ const store = createStore({
     },
     actions: {
         registerUser({commit}, userData) {
-            axios.post('/auth/register', userData)
-                .then(({tokenData}) => {
-                    commit('setUser', tokenData, userData);
+            return axios.post('/auth/register', userData)
+                .then(response => {
+                    commit('setUser', {token: response.data.access_token, user: userData});
+                    return response;
+                })
+        },
+        login({commit}, userData) {
+            return axios.post('/auth/login', userData)
+                .then(response => {
+                    commit('setUser', {token: response.data.access_token, user: userData});
+                    return response;
                 })
         }
     },
@@ -27,11 +35,11 @@ const store = createStore({
             state.infoMessage = message;
             setTimeout(() => state.infoMessage = '', 3000);
         },
-        setUser(state, tokenData, userData) {
-            state.user.data = userData;
-            state.user.token = tokenData;
-            sessionStorage.setItem('TOKEN', tokenData);
-            sessionStorage.setItem('USER', userData);
+        setUser(state, data) {
+            state.user.data = data.user;
+            state.user.token = data.token;
+            sessionStorage.setItem('TOKEN', data.token);
+            sessionStorage.setItem('USER', JSON.stringify(data.user));
         }
     },
 })
