@@ -7,6 +7,7 @@ import Dashboard from '../views/Dashboard.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import CreateMovie from '../views/CreateMovie.vue';
+import Movie from '../views/Movie.vue';
 
 import store from '../store';
 
@@ -19,7 +20,7 @@ const routes = [
         meta: {requireAuth: true},
         children: [
             {
-                path: '/dashboard', 
+                path: '/dashboard',
                 name: 'Dashboard',
                 component: Dashboard
             },
@@ -27,6 +28,11 @@ const routes = [
                 path: '/addmovie',
                 name: 'AddMovie',
                 component: CreateMovie
+            },
+            {
+                path: '/movie/:title',
+                name: 'Movie',
+                component: Movie
             }
         ]
     },
