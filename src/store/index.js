@@ -7,7 +7,8 @@ const store = createStore({
             token: sessionStorage.getItem('TOKEN') ?? null,
             data: JSON.parse(sessionStorage.getItem('USER'))
         },
-        infoMessage: ''
+        infoMessage: '',
+        movies: []
     },
     getters: {
         getInfoMessage(state) {
@@ -28,6 +29,20 @@ const store = createStore({
                     commit('setUser', {token: response.data.access_token, user: userData});
                     return response;
                 })
+        },
+        addMovie({commit}, movieData) {
+            return axios.post('/movies', movieData)
+                .then(response => {
+                    console.log(response)
+                    commit('addMovie', movieData)
+                    return response;
+                })
+        },
+        fetchMovies({commit}) {
+            axios.get('/movies')
+                .then(response => {
+                    commit('setMovies', response.data)
+                })
         }
     },
     mutations: {
@@ -40,6 +55,17 @@ const store = createStore({
             state.user.token = data.token;
             sessionStorage.setItem('TOKEN', data.token);
             sessionStorage.setItem('USER', JSON.stringify(data.user));
+        },
+        logout(state) {
+            state.user.data = {};
+            state.user.token = null;
+            sessionStorage.clear();
+        },
+        addMovie(state, movieData) {
+            state.movies.push(movieData);
+        },
+        setMovies(state, data) {
+            state.movies = data;
         }
     },
 })

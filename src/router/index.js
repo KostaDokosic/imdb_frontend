@@ -6,6 +6,7 @@ import AuthLayout from '../components/AuthLayout.vue';
 import Dashboard from '../views/Dashboard.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
+import CreateMovie from '../views/CreateMovie.vue';
 
 import store from '../store';
 
@@ -21,6 +22,11 @@ const routes = [
                 path: '/dashboard', 
                 name: 'Dashboard',
                 component: Dashboard
+            },
+            {
+                path: '/addmovie',
+                name: 'AddMovie',
+                component: CreateMovie
             }
         ]
     },
