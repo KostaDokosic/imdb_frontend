@@ -31,14 +31,15 @@ const store = createStore({
                 })
         },
         addMovie({commit}, movieData) {
-            return axios.post('/movie/add', movieData)
+            return axios.post('/movies', movieData)
                 .then(response => {
+                    console.log(response)
                     commit('addMovie', movieData)
                     return response;
                 })
         },
         fetchMovies({commit}) {
-            axios.get('/movie/getall')
+            axios.get('/movies')
                 .then(response => {
                     commit('setMovies', response.data)
                 })
