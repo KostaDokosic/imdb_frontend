@@ -8,17 +8,34 @@ const store = createStore({
             data: JSON.parse(sessionStorage.getItem('USER'))
         },
         infoMessage: '',
-        movies: {
-            movies: [],
-            total: 0
-        }
+        movies: {},
+        genres: [
+            'Action',
+            'Adventure',
+            'Comedy',
+            'Crime',
+            'Mystery',
+            'Horror',
+            'Romance',
+            'Satire',
+            'Thriler'
+        ]
     },
     getters: {
         getInfoMessage(state) {
             return state.infoMessage;
         },
-        getPageNumber(state) {
-            return Math.ceil(state.movies.total / 8);
+        getGenres(state) {
+            return state.genres;
+        },
+        getMovies(state) {
+            return state.movies.data ? state.movies.data : 0;
+        },
+        getTotalPages(state) {
+            return state.movies.meta.last_page;
+        },
+        getCurrentPage(state) {
+            return state.movies.meta.current_page;
         }
     },
     actions: {
@@ -43,10 +60,16 @@ const store = createStore({
                     return response;
                 })
         },
-        fetchMovies({commit}, currentPage) {
-            axios.get(`/movies?currentPage=${currentPage}`)
+        fetchMovies({commit}, page) {
+            axios.get(`/movies?page=${page}`)
                 .then(response => {
                     commit('setMovies', response.data)
+                })
+        },
+        fetchGenres({commit}) {
+            axios.get('/genres')
+                .then(response => {
+                    commit('setGenres', response.data)
                 })
         }
     },
@@ -71,6 +94,9 @@ const store = createStore({
         },
         setMovies(state, data) {
             state.movies = data;
+        },
+        setGenres(state, data) {
+            state.genres = data;
         }
     },
 })

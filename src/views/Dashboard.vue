@@ -1,14 +1,14 @@
 <template>
-  <main>
-    {{$store.state.movies.movies.length === 0 ? 'There is no movies in database' : ''}}
-    <Movie :movie-data="$store.state.movies.movies[0]" class="featured" v-if="$store.state.movies.movies.length" />
+  <main v-if="$store.getters.getMovies">
+    {{$store.getters.getMovies.length === 0 ? 'There is no movies in database' : ''}}
+    <Movie :movie-data="$store.getters.getMovies[0]" class="featured" />
 
-    <h1 style="margin-top: 5rem;" v-if="$store.state.movies.movies.length">Movies</h1>
-    <div class="row" v-if="$store.state.movies.movies.length">
-      <Movie v-for="(movie, index) in $store.state.movies.movies" :key="index" :movie-data="movie" :v-if="index > 0" />
+    <h1 style="margin-top: 5rem;">Movies</h1>
+    <div class="row">
+      <Movie v-for="(movie, index) in $store.getters.getMovies" :key="index" :movie-data="movie" :v-if="index > 0" />
     </div>
     <div class="pagination">
-      <span :class="currentPage === i ? 'active' : 'deactive'" v-for="i in $store.getters.getPageNumber" @click="changePagination(i)">{{i}}</span>
+      <span :class="$store.getters.getCurrentPage === i ? 'active' : ''" v-for="i in $store.getters.getTotalPages" @click="changePagination(i)">{{i}}</span>
     </div>
   </main>
 </template>
@@ -29,8 +29,7 @@ export default {
   },
   methods: {
     changePagination(index) {
-      this.currentPage = index;
-      store.dispatch('fetchMovies', index - 1);
+      store.dispatch('fetchMovies', index);
     }
   },
   components: {
