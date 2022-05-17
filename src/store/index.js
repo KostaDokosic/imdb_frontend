@@ -8,11 +8,17 @@ const store = createStore({
             data: JSON.parse(sessionStorage.getItem('USER'))
         },
         infoMessage: '',
-        movies: []
+        movies: {
+            movies: [],
+            total: 0
+        }
     },
     getters: {
         getInfoMessage(state) {
             return state.infoMessage;
+        },
+        getPageNumber(state) {
+            return Math.ceil(state.movies.total / 8);
         }
     },
     actions: {
@@ -37,8 +43,8 @@ const store = createStore({
                     return response;
                 })
         },
-        fetchMovies({commit}) {
-            axios.get('/movies')
+        fetchMovies({commit}, currentPage) {
+            axios.get(`/movies?currentPage=${currentPage}`)
                 .then(response => {
                     commit('setMovies', response.data)
                 })
