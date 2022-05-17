@@ -15,7 +15,7 @@ import store from "../store";
 export default {
   computed: {
     getMovieData() {
-       return store.state.movies.find(movie => movie.title === this.$route.params.title)
+       return store.state.movies.find(movie => movie.title === this.$route.params.title) ?? 0
     }
   }
 }

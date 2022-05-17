@@ -8,34 +8,31 @@ const store = createStore({
             data: JSON.parse(sessionStorage.getItem('USER'))
         },
         infoMessage: '',
-        movies: {},
-        genres: [
-            'Action',
-            'Adventure',
-            'Comedy',
-            'Crime',
-            'Mystery',
-            'Horror',
-            'Romance',
-            'Satire',
-            'Thriler'
-        ]
+        movies: {
+            meta: {
+                last_page: 0,
+                current_page: 0
+            }
+        },
+        genres: []
     },
     getters: {
         getInfoMessage(state) {
             return state.infoMessage;
         },
         getGenres(state) {
-            return state.genres;
+            return state.genres.map(genre => {
+                return {name: genre.name, id: genre.id}
+            });
         },
         getMovies(state) {
             return state.movies.data ? state.movies.data : 0;
         },
         getTotalPages(state) {
-            return state.movies.meta.last_page;
+            return state.movies.meta.last_page ?? 0;
         },
         getCurrentPage(state) {
-            return state.movies.meta.current_page;
+            return state.movies.meta.current_page ?? 0;
         }
     },
     actions: {
@@ -61,8 +58,9 @@ const store = createStore({
                     return response;
                 })
         },
-        fetchMovies({commit}, page) {
-            axios.get(`/movies?page=${page}`)
+        fetchMovies({commit}, data) {
+            console.log(data)
+            axios.get(`/movies?page=${data.page}&genre=${data.genre ? data.genre : -1}`)
                 .then(response => {
                     commit('setMovies', response.data)
                 })
@@ -94,7 +92,9 @@ const store = createStore({
             state.movies.push(movieData);
         },
         setMovies(state, data) {
-            state.movies = data;
+            state.movies.data = data.data;
+            if(data.meta) state.movies.meta = data.meta
+            if(!data.meta) state.movies.meta.last_page = 1;
         },
         setGenres(state, data) {
             state.genres = data;

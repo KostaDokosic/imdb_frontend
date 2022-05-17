@@ -41,10 +41,6 @@ function addMovie() {
     alert('Error while creating movie. Please try again...');
   })
 }
-
-onBeforeMount(() => {
-  store.dispatch('fetchGenres');
-})
 </script>
 
 <style scoped>
