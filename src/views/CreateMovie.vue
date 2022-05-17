@@ -7,7 +7,7 @@
     <div class="form_group">
       <label for="genre">Genres</label>
       <select id="genre" v-model="movie.genre">
-        <option v-for="genre in genres" :key="genre" :value="genre">{{genre}}</option>
+        <option v-for="genre in $store.getters.getGenres" :key="genre" :value="genre">{{genre}}</option>
       </select>
     </div>
     <div class="form_group">
@@ -26,21 +26,11 @@
 
 <script setup>
 import store from "../store";
+import {onBeforeMount} from "vue";
 
-const genres = [
-    'Action',
-    'Adventure',
-    'Comedy',
-    'Crime',
-    'Mystery',
-    'Horror',
-    'Romance',
-    'Satire',
-    'Thriler'
-];
 const movie = {
   title: '',
-  genre: genres[0],
+  genre: store.getters.getGenres[0],
   coverImage: '',
   description: ''
 }
@@ -51,6 +41,10 @@ function addMovie() {
     alert('Error while creating movie. Please try again...');
   })
 }
+
+onBeforeMount(() => {
+  store.dispatch('fetchGenres');
+})
 </script>
 
 <style scoped>
