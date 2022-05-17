@@ -21,11 +21,10 @@ export default {
   data() {
 
     return {
-      currentPage: 1
     }
   },
   beforeMount() {
-    store.dispatch('fetchMovies', this.currentPage - 1);
+    store.dispatch('fetchMovies', 1);
   },
   methods: {
     changePagination(index) {
