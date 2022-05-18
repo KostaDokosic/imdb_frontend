@@ -14,7 +14,8 @@ const store = createStore({
                 current_page: 0
             }
         },
-        genres: []
+        genres: [],
+        comments: []
     },
     getters: {
         getInfoMessage(state) {
@@ -33,6 +34,9 @@ const store = createStore({
         },
         getCurrentPage(state) {
             return state.movies.meta.current_page ?? 0;
+        },
+        getFeaturedMovie(state) {
+            return state.movies.data[0];
         }
     },
     actions: {
@@ -53,14 +57,14 @@ const store = createStore({
         addMovie({commit}, movieData) {
             return axios.post('/movies', movieData)
                 .then(response => {
-                    console.log(response)
                     commit('addMovie', movieData)
                     return response;
                 })
         },
         fetchMovies({commit}, data) {
-            console.log(data)
-            axios.get(`/movies?page=${data.page}&genre=${data.genre ? data.genre : -1}`)
+            let genres = '';
+            data.genres?.forEach(genre => genres += `&genre_ids[]=${genre.id}`);
+            axios.get(`/movies?page=${data.page}${genres.length > 0 ? genres : ''}`)
                 .then(response => {
                     commit('setMovies', response.data)
                 })
@@ -97,7 +101,7 @@ const store = createStore({
             if(!data.meta) state.movies.meta.last_page = 1;
         },
         setGenres(state, data) {
-            state.genres = data;
+            state.genres = data.data;
         }
     },
 })

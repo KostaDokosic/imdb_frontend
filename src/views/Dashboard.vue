@@ -6,8 +6,8 @@
     </select>
   </header>
   <main v-if="$store.getters.getMovies">
-    {{$store.getters.getMovies.length === 0 ? 'There is no movies in database' : ''}}
-    <Movie v-if="$store.getters.getMovieData" :movie-data="$store.getters.getMovies[0]" class="featured" />
+    {{!$store.getters.getMovies ? 'There is no movies in database' : ''}}
+    <Movie :movie-data="$store.getters.getFeaturedMovie" class="featured" />
 
     <h1 style="margin-top: 5rem;">Movies</h1>
     <div class="row" v-if="$store.state.movies.data">
@@ -39,8 +39,7 @@ export default {
       store.dispatch('fetchMovies', {page: index});
     },
     handleFilterChange() {
-      console.log(this.genreFilter[0])
-      store.dispatch('fetchMovies', {page: store.getters.getCurrentPage, genre: this.genreFilter[0].id})
+      store.dispatch('fetchMovies', {page: store.getters.getCurrentPage, genres: this.genreFilter})
     }
   },
   components: {

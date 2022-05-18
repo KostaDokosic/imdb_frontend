@@ -3,7 +3,9 @@
     <img :src="movieData.coverImage" alt="Cover">
     <div class="movie__content">
       <h1>{{ movieData.title }}</h1>
-      <h2>{{ movieData.genre }}</h2>
+      <ul>
+        <li v-for="genre in movieData.genres" :key="genre.id">{{genre.name}}</li>
+      </ul>
       <p>{{ movieData.description }}</p>
     </div>
 
