@@ -26,6 +26,9 @@ const store = createStore({
                 return {name: genre.name, id: genre.id}
             });
         },
+        getGenreName: (state) => (id) => {
+            return state.genres.find(genre => genre.id === id)?.name;
+        },
         getMovies(state) {
             return state.movies.data ? state.movies.data : 0;
         },
@@ -55,7 +58,9 @@ const store = createStore({
                 })
         },
         addMovie({commit}, movieData) {
-            return axios.post('/movies', movieData)
+            let genres = '';
+            movieData.genre_ids?.forEach(id => genres += `&genre_ids[]=${id}`);
+            return axios.post(`/movies?title=${movieData.title}&description=${movieData.description}&coverImage=${movieData.coverImage}${genres}`)
                 .then(response => {
                     commit('addMovie', movieData)
                     return response;

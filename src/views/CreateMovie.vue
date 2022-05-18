@@ -6,8 +6,8 @@
     </div>
     <div class="form_group">
       <label for="genre">Genres</label>
-      <select id="genre" v-model="movie.genre">
-        <option v-for="genre in $store.getters.getGenres" :key="genre" :value="genre">{{genre}}</option>
+      <select id="genre" v-model="movie.genre_ids" multiple>
+        <option v-for="genre in $store.getters.getGenres" :key="genre.id" :value="genre.id">{{genre.name}}</option>
       </select>
     </div>
     <div class="form_group">
@@ -26,11 +26,10 @@
 
 <script setup>
 import store from "../store";
-import {onBeforeMount} from "vue";
 
 const movie = {
   title: '',
-  genre: store.getters.getGenres[0],
+  genre_ids: [store.getters.getGenres[0].id],
   coverImage: '',
   description: ''
 }

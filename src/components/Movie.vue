@@ -4,7 +4,9 @@
     <div class="movie__content">
       <h1>{{ movieData.title }}</h1>
       <ul>
-        <li v-for="genre in movieData.genres" :key="genre.id">{{genre.name}}</li>
+        <li v-for="genre in movieData.genres" :key="genre">
+          {{ $store.getters.getGenreName(genre) }}
+        </li>
       </ul>
       <p>{{ movieData.description }}</p>
     </div>
