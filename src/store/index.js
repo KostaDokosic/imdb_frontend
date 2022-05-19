@@ -84,6 +84,12 @@ const store = createStore({
                 .then(response => {
                     return response.data;
                 })
+        },
+        postComment({commit}, data) {
+            return axios.post('/comments', data)
+                .then(response => {
+                    return response.data
+                })
         }
     },
     mutations: {
