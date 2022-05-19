@@ -90,6 +90,12 @@ const store = createStore({
                 .then(response => {
                     return response.data
                 })
+        },
+        onLike({commit}, data) {
+            return axios.post('/likes', data)
+                .then(response => {
+                    return response.data;
+                })
         }
     },
     mutations: {
