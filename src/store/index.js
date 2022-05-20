@@ -15,7 +15,6 @@ const store = createStore({
             }
         },
         genres: [],
-        comments: []
     },
     getters: {
         getInfoMessage(state) {
@@ -78,6 +77,24 @@ const store = createStore({
             axios.get('/genres')
                 .then(response => {
                     commit('setGenres', response.data)
+                })
+        },
+        fetchComments({commit}, movieId) {
+            return axios.get(`/comments?movie_id=${movieId}`)
+                .then(response => {
+                    return response.data;
+                })
+        },
+        postComment({commit}, data) {
+            return axios.post('/comments', data)
+                .then(response => {
+                    return response.data
+                })
+        },
+        onLike({commit}, data) {
+            return axios.post('/likes', data)
+                .then(response => {
+                    return response.data
                 })
         }
     },
