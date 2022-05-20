@@ -14,8 +14,8 @@
     </router-link>
     <p>Likes: {{movieData.totalLikes}}</p>
     <div class="btn_group">
-      <button type="button" :class="movieData.userLike === 1 ? 'active' : ''" @click="onLike(true)">Like</button>
-      <button type="button" :class="movieData.userLike === 0 ? 'active' : ''" @click="onLike(false)">Dislike</button>
+      <button type="button" :class="movieData.userLike === 1 ? 'active' : ''" @click="onLike(true)" :disabled="movieData.userLike === 1">Like</button>
+      <button type="button" :class="movieData.userLike === 0 ? 'active' : ''" @click="onLike(false)" :disabled="movieData.userLike === 0">Dislike</button>
     </div>
   </div>
 </template>
@@ -28,11 +28,7 @@ export default {
     onLike(state) {
       store.dispatch('onLike', {movie_id: this.movieData.id, like: state === true ? 1 : 0})
           .then(response => {
-            if(response === 1 && state === true) {
-              this.movieData.userLike = 1;
-            } else if(response === 1 && state === false) {
-              this.movieData.userLike = 0;
-            }
+            this.movieData.userLike = response.data[0].like;
           })
           .catch(error => {
             console.log(error)
