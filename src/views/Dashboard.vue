@@ -2,19 +2,19 @@
   <header>
     <h4>Filters</h4>
     <select @change="handleFilterChange" v-model="genreFilter" class="filter" multiple>
-      <option :value="genre" v-for="genre in $store.getters.getGenres">{{genre.name}}</option>
+      <option :value="genre" v-for="genre in getGenres">{{genre.name}}</option>
     </select>
   </header>
-  <main v-if="$store.getters.getMovies">
-    {{!$store.getters.getMovies ? 'There is no movies in database' : ''}}
-    <Movie :movie-data="$store.getters.getFeaturedMovie" class="featured" />
+  <main v-if="getMovies">
+    {{!getMovies ? 'There is no movies in database' : ''}}
+    <Movie :movie-data="getFeaturedMovie" class="featured" />
 
     <h1 style="margin-top: 5rem;">Movies</h1>
     <div class="row" v-if="$store.state.movies.data">
-      <Movie v-for="(movie, index) in $store.getters.getMovies" :key="index" :movie-data="movie" :v-if="index > 0" />
+      <Movie v-for="(movie, index) in getMovies" :key="index" :movie-data="movie" :v-if="index > 0" />
     </div>
     <div class="pagination">
-      <span :class="$store.getters.getCurrentPage === i ? 'active' : ''" v-for="i in $store.getters.getTotalPages" @click="changePagination(i)">{{i}}</span>
+      <span :class="getCurrentPage === i ? 'active' : ''" v-for="i in getTotalPages" @click="changePagination(i)">{{i}}</span>
     </div>
   </main>
 </template>
@@ -44,6 +44,23 @@ export default {
   },
   components: {
     Movie
+  },
+  computed: {
+    getFeaturedMovie() {
+      return store.getters.getFeaturedMovie;
+    },
+    getCurrentPage() {
+      return store.getters.getCurrentPage;
+    },
+    getTotalPages() {
+      return store.getters.getTotalPages;
+    },
+    getMovies() {
+      return store.getters.getMovies;
+    },
+    getGenres() {
+      return store.getters.getGenres;
+    }
   }
 }
 
