@@ -68,7 +68,7 @@ const store = createStore({
         fetchMovies({commit}, data) {
             let genres = '';
             data.genres?.forEach(genre => genres += `&genre_ids[]=${genre.id}`);
-            axios.get(`/movies?page=${data.page}${genres.length > 0 ? genres : ''}`)
+            axios.get(`/movies?page=${data.page}${genres.length > 0 ? genres : ''}${data.likeFilter ? '&likeFilter=' + data.likeFilter : ''}`)
                 .then(response => {
                     commit('setMovies', response.data)
                 })

@@ -4,6 +4,11 @@
     <select @change="handleFilterChange" v-model="genreFilter" class="filter" multiple>
       <option :value="genre" v-for="genre in $store.getters.getGenres">{{genre.name}}</option>
     </select>
+    <select @change="handleFilterChange" v-model="likeFilter">
+      <option :value="null">Filter by</option>
+      <option value="1">Likes</option>
+      <option value="0">Dislikes</option>
+    </select>
   </header>
   <main v-if="$store.getters.getMovies">
     {{!$store.getters.getMovies ? 'There is no movies in database' : ''}}
@@ -27,7 +32,8 @@ export default {
   data() {
 
     return {
-      genreFilter: []
+      genreFilter: [],
+      likeFilter: false
     }
   },
   beforeMount() {
@@ -39,7 +45,7 @@ export default {
       store.dispatch('fetchMovies', {page: index});
     },
     handleFilterChange() {
-      store.dispatch('fetchMovies', {page: store.getters.getCurrentPage, genres: this.genreFilter})
+      store.dispatch('fetchMovies', {page: store.getters.getCurrentPage, genres: this.genreFilter, likeFilter: this.likeFilter})
     }
   },
   components: {
