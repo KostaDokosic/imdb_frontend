@@ -6,7 +6,7 @@
         <h1>{{ movieData.title }}</h1>
         <ul>
           <li v-for="genre in movieData.genres" :key="genre">
-            {{ $store.getters.getGenreName(genre) }}
+            {{ getGenreName(genre) }}
           </li>
         </ul>
         <p>{{ movieData.description.substring(0, 70) + '...' }}</p>
@@ -17,6 +17,7 @@
       <button type="button" :class="movieData.userLike === 1 ? 'active' : ''" @click="onLike(true)" :disabled="movieData.userLike === 1">Like</button>
       <button type="button" :class="movieData.userLike === 0 ? 'active' : ''" @click="onLike(false)" :disabled="movieData.userLike === 0">Dislike</button>
     </div>
+    <p v-if="errorMessage">{{errorMessage}}</p>
   </div>
 </template>
 
@@ -24,6 +25,12 @@
 import store from "../store";
 export default {
   props: ['movieData'],
+  data() {
+
+    return {
+      errorMessage: ''
+    }
+  },
   methods: {
     onLike(state) {
       store.dispatch('onLike', {movie_id: this.movieData.id, like: state === true ? 1 : 0})
@@ -31,8 +38,13 @@ export default {
             this.movieData.userLike = response.data[0].like;
           })
           .catch(error => {
-            console.log(error)
+            this.errorMessage = 'Error. Please try again';
           })
+    }
+  },
+  computed: {
+    getGenreName(genre) {
+      return store.getters.getGenreName;
     }
   }
 }
