@@ -94,7 +94,7 @@ const store = createStore({
         onLike({commit}, data) {
             return axios.post('/likes', data)
                 .then(response => {
-                    return response.data
+                    return response.data;
                 })
         }
     },
