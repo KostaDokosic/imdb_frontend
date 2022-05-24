@@ -1,17 +1,21 @@
 <template>
-  <header>
-    <h4>Filters</h4>
-    <select @change="handleFilterChange" v-model="genreFilter" class="filter" multiple>
-      <option :value="genre" v-for="genre in getGenres">{{genre.name}}</option>
-    </select>
-  </header>
+<!--  <header>-->
+<!--    <h4>Filters</h4>-->
+<!--    <select @change="handleFilterChange" v-model="genreFilter" class="filter" multiple>-->
+<!--      <option :value="genre" v-for="genre in getGenres">{{genre.name}}</option>-->
+<!--    </select>-->
+<!--    <select v-model="likeFilter" @change="handleFilterChange">-->
+<!--      <option :value="null">Filter by</option>-->
+<!--      <option :value="1">Likes</option>-->
+<!--      <option :value="0">Dislikes</option>-->
+<!--    </select>-->
+<!--  </header>-->
   <main v-if="getMovies">
     {{!getMovies ? 'There is no movies in database' : ''}}
-    <Movie :movie-data="getFeaturedMovie" class="featured" />
 
     <h1 style="margin-top: 5rem;">Movies</h1>
-    <div class="row" v-if="$store.state.movies.data">
-      <Movie v-for="(movie, index) in getMovies" :key="index" :movie-data="movie" :v-if="index > 0" />
+    <div class="row" v-if="getMovies">
+      <Movie v-for="(movie, index) in getMovies" :key="index" :movie-data="movie" />
     </div>
     <div class="pagination">
       <span :class="getCurrentPage === i ? 'active' : ''" v-for="i in getTotalPages" @click="changePagination(i)">{{i}}</span>
@@ -27,7 +31,8 @@ export default {
   data() {
 
     return {
-      genreFilter: []
+      genreFilter: [],
+      likeFilter: null
     }
   },
   beforeMount() {
@@ -39,7 +44,7 @@ export default {
       store.dispatch('fetchMovies', {page: index});
     },
     handleFilterChange() {
-      store.dispatch('fetchMovies', {page: store.getters.getCurrentPage, genres: this.genreFilter})
+      store.dispatch('fetchMovies', {page: store.getters.getCurrentPage, genres: this.genreFilter, likeFilter: this.likeFilter})
     }
   },
   components: {
@@ -78,7 +83,8 @@ export default {
 .row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
+  column-gap: 2rem;
+  row-gap: 4rem;
 
   .movie {
 
@@ -97,14 +103,15 @@ export default {
   margin: 4rem auto;
 
   .active {
-    color: lightgreen !important;
+    color: #2C666E !important;
   }
 
   span {
     font-size: 1.5rem;
+    font-weight: 800;
     &:hover {
       cursor: pointer;
-      color: skyblue;
+      color: #2C666E;
     }
   }
 }

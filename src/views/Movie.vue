@@ -1,6 +1,6 @@
 <template>
   <main v-if="getMovieData">
-    <img :src="getMovieData.coverImage" alt="Cover">
+    <img :src="getCoverImage(getMovieData)" alt="Cover">
     <div class="movie__content">
       <h1>{{ getMovieData.title }}</h1>
       <ul>
@@ -41,6 +41,9 @@ export default {
   computed: {
     getMovieData() {
        return store.state.movies.data.find(movie => movie.title === this.$route.params.title) ?? 0
+    },
+    getCoverImage(data) {
+      return data.coverImage.includes('movie_images') ? `http://localhost:8000/${data.coverImage}` : data.coverImage
     }
   },
   methods: {

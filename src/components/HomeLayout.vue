@@ -28,7 +28,7 @@ function logout() {
 <style lang="scss" scoped>
 .topnav {
   overflow: hidden;
-  background-color: #333;
+  background-color: #131217;
   margin-bottom: 2.5rem;
 }
 
@@ -43,13 +43,13 @@ function logout() {
 }
 
 .topnav a:hover {
-  background-color: skyblue;
+  background-color: #2C666E;
   color: white;
   cursor: pointer;
 }
 
 .active {
-  background-color: skyblue;
+  background-color: #2C666E;
   color: white;
 }
 
