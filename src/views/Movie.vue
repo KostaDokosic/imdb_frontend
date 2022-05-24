@@ -17,7 +17,7 @@
 
         <form @submit.prevent="postComment" class="comment_post">
           <label>Comment</label>
-          <textarea rows="10" placeholder="Post your comment" required></textarea>
+          <textarea rows="10" placeholder="Post your comment" @change="textChange" required></textarea>
           <button type="submit">Post Comment</button>
         </form>
 
@@ -55,14 +55,17 @@ export default {
     }
   },
   methods: {
-    postComment(e) {
+    postComment() {
       store.dispatch('postComment', {movie_id: this.getMovieData.id, text: this.comment})
-          .then(responseData => {
-            this.comments.push(responseData);
+          .then(response => {
+            this.comments.push(response.data);
           })
           .catch(error => {
             this.errorMessage = 'Error occurred while creating comment. Please try again.'
           })
+    },
+    textChange(e) {
+      this.comment = e.target.value;
     }
   },
   beforeMount() {
