@@ -8,7 +8,7 @@ const store = createStore({
             data: JSON.parse(sessionStorage.getItem('USER'))
         },
         infoMessage: '',
-        movies: {
+        movies: JSON.parse(sessionStorage.getItem('MOVIES')) ?? {
             meta: {
                 last_page: 0,
                 current_page: 0
@@ -37,9 +37,6 @@ const store = createStore({
         getCurrentPage(state) {
             return state.movies.meta.current_page ?? 0;
         },
-        getFeaturedMovie(state) {
-            return state.movies.data[0];
-        }
     },
     actions: {
         registerUser({commit}, userData) {
@@ -118,6 +115,7 @@ const store = createStore({
             state.movies.data = data.data;
             if(data.meta) state.movies.meta = data.meta
             if(!data.meta) state.movies.meta.last_page = 1;
+            sessionStorage.setItem('MOVIES', JSON.stringify(state.movies));
         },
         setGenres(state, data) {
             state.genres = data.data;

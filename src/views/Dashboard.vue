@@ -51,9 +51,6 @@ export default {
     Movie
   },
   computed: {
-    getFeaturedMovie() {
-      return store.getters.getFeaturedMovie;
-    },
     getCurrentPage() {
       return store.getters.getCurrentPage;
     },
