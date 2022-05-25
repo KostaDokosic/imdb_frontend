@@ -90,6 +90,11 @@ const store = createStore({
                 .then(response => {
                     commit('setMovieLike', {response: response.data.data ? response.data.data : response.data, id: data.movie_id})
                 })
+        },
+        logout({commit}) {
+            commit('logout')
+            axios.post('/auth/logout')
+                .then(response => commit('logout'))
         }
     },
     mutations: {

@@ -18,7 +18,7 @@ import store from "../store";
 import {useRouter} from "vue-router";
 const router = useRouter();
 function logout() {
-  store.commit('logout');
+  store.dispatch('logout');
   router.push({
     name: 'Login'
   })

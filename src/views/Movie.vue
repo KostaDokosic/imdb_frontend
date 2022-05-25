@@ -1,8 +1,9 @@
 <template>
   <main v-if="getMovieData">
+
     <div class="movie">
       <div class="movie__image">
-        <img :src="getCoverImage" alt="Cover">
+        <img :src="getCoverImage" @error="replaceImg" alt="Cover">
       </div>
       <div class="movie__content">
         <div class="movie__content_info">
@@ -36,15 +37,24 @@
 </template>
 
 <script>
-
+import Modal from '../components/Modal.vue';
 import store from "../store";
+import { ref } from 'vue';
 export default {
   data() {
     return {
       comment: '',
       comments: [],
-      errorMessage: []
+      errorMessage: [],
+      modalOpen: {
+        open: ref(false),
+        title: '',
+        text: ''
+      }
     }
+  },
+  components: {
+    Modal
   },
   computed: {
     getMovieData() {
@@ -66,6 +76,9 @@ export default {
     },
     textChange(e) {
       this.comment = e.target.value;
+    },
+    replaceImg(e) {
+      e.target.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/832px-No-Image-Placeholder.svg.png';
     }
   },
   beforeMount() {

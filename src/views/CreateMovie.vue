@@ -21,16 +21,19 @@
     <div class="form_group">
       <button type="submit">Add Movie</button>
     </div>
-    <div class="errorMessage" v-if="errorMessage.length" >
-      <p v-for="(message, index) in errorMessage" :key="index">{{message}}</p>
-    </div>
+
+    <teleport to="body">
+      <Modal :title="modal.title" :message="modal.text" @close="modal.open = false" v-if="modal.open" />
+    </teleport>
   </form>
 </template>
 
 <script>
 import store from "../store";
 import {useRouter} from "vue-router";
+import Modal from '../components/Modal.vue';
 const router = useRouter();
+import { ref } from 'vue';
 
 export default {
 
@@ -40,9 +43,13 @@ export default {
         title: '',
         genre_ids: [],
         coverImage: {},
-        description: ''
+        description: '',
       },
-      errorMessage: []
+      modal: {
+        open: ref(false),
+        title: '',
+        text: ''
+      }
     }
   },
   methods: {
@@ -57,19 +64,25 @@ export default {
       this.movie.coverImage = e.target.files.item(0)
     },
     onError(errors) {
-      this.errorMessage = [];
+      let errorMessage = [];
       Object.keys(errors)?.forEach(key => {
-        Object.values(errors[key])?.forEach(e => {
-          this.errorMessage.push(e)
-        })
+        Object.values(errors[key])?.forEach(e => errorMessage.push(e))
       });
-      setTimeout(() => this.errorMessage = [], 5000);
+      this.alert('Error', errorMessage);
+    },
+    alert(title, text) {
+      this.modal.text = text;
+      this.modal.title = title;
+      this.modal.open = true;
     }
   },
   computed: {
     getGenres() {
       return store.getters.getGenres
     }
+  },
+  components: {
+    Modal
   }
 }
 </script>
