@@ -37,6 +37,11 @@ const store = createStore({
         getCurrentPage(state) {
             return state.movies.meta.current_page ?? 0;
         },
+        getFormattedGenres(state) {
+            return state.genres.map(genre => {
+                return {label: genre.name, value: genre.id}
+            });
+        },
     },
     actions: {
         registerUser({commit}, userData) {
@@ -61,7 +66,7 @@ const store = createStore({
         },
         fetchMovies({commit}, data) {
             let genres = '';
-            data.genres?.forEach(genre => genres += `&genre_ids[]=${genre.id}`);
+            data.genres?.forEach(genre => genres += `&genre_ids[]=${genre}`);
             axios.get(`/movies?page=${data.page}${genres.length > 0 ? genres : ''}${data.likeFilter ? '&likeFilter=' + data.likeFilter : ''}`)
                 .then(response => {
                     commit('setMovies', response.data)
