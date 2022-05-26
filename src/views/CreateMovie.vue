@@ -54,21 +54,28 @@ export default {
   },
   methods: {
     addMovie() {
+      if(!store.getters.isEditor) return this.onError('You dont have permissions to add new movie');
       store.dispatch('addMovie', this.movie).then((res) => {
-        alert(`${this.movie.title} has been added added.`);
+        this.onError(`${this.movie.title} has been added added.`, false, 'Success');
       }).catch(e => {
-        if(e.response && e.response.data && e.response.data.errors) this.onError(e.response?.data?.errors);
+        if(e.response && e.response.data && e.response.data.errors) this.onError(e.response?.data?.errors, true);
+        else {
+          this.onError((e.response.data.message))
+        }
       })
     },
     fileChange(e) {
       this.movie.coverImage = e.target.files.item(0)
     },
-    onError(errors) {
-      let errorMessage = [];
-      Object.keys(errors)?.forEach(key => {
-        Object.values(errors[key])?.forEach(e => errorMessage.push(e))
-      });
-      this.alert('Error', errorMessage);
+    onError(errors, isArray = false, title = 'Error') {
+      if(isArray) {
+        let errorMessage = [];
+        Object.keys(errors)?.forEach(key => {
+          Object.values(errors[key])?.forEach(e => errorMessage.push(e))
+        });
+        this.alert(title, errorMessage);
+      }
+      this.alert(title, errors);
     },
     alert(title, text) {
       this.modal.text = text;

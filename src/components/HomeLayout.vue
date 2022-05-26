@@ -3,7 +3,7 @@
     <nav>
       <div class="topnav">
         <router-link to="/dashboard" :class="$route.path === '/dashboard' ? 'active' : ''">Dashboard</router-link>
-        <router-link to="/addmovie" :class="$route.path === '/addmovie' ? 'active' : ''">Add Movie</router-link>
+        <router-link to="/addmovie" :class="$route.path === '/addmovie' ? 'active' : ''" v-if="$store.getters.isEditor">Add Movie</router-link>
         <a @click="logout">Logout</a>
       </div>
     </nav>

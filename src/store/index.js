@@ -5,7 +5,8 @@ const store = createStore({
     state: {
         user: {
             token: sessionStorage.getItem('TOKEN') ?? null,
-            data: JSON.parse(sessionStorage.getItem('USER'))
+            data: JSON.parse(sessionStorage.getItem('USER')),
+            editor: sessionStorage.getItem('EDITOR')
         },
         infoMessage: '',
         movies: JSON.parse(sessionStorage.getItem('MOVIES')) ?? {
@@ -42,6 +43,9 @@ const store = createStore({
                 return {label: genre.name, value: genre.id}
             });
         },
+        isEditor(state) {
+            return !!state.user.editor;
+        }
     },
     actions: {
         registerUser({commit}, userData) {
@@ -54,7 +58,7 @@ const store = createStore({
         login({commit}, userData) {
             return axios.post('/auth/login', userData)
                 .then(response => {
-                    commit('setUser', {token: response.data.access_token, user: userData});
+                    commit('setUser', {token: response.data.access_token, user: userData, editor: response.data.editor});
                     return response;
                 })
         },
@@ -110,8 +114,10 @@ const store = createStore({
         setUser(state, data) {
             state.user.data = data.user;
             state.user.token = data.token;
+            state.user.editor = data.editor;
             sessionStorage.setItem('TOKEN', data.token);
             sessionStorage.setItem('USER', JSON.stringify(data.user));
+            sessionStorage.setItem('EDITOR', data.editor);
         },
         logout(state) {
             state.user.data = {};

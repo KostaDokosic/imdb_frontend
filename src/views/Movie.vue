@@ -14,6 +14,7 @@
             </li>
           </ul>
           <p>{{ getMovieData.description }}</p>
+          <button type="button" @click="deleteMovie" v-if="$store.getters.isEditor">Delete Movie</button>
         </div>
 
         <form @submit.prevent="postComment" class="comment_post">
@@ -69,6 +70,7 @@ export default {
       store.dispatch('postComment', {movie_id: this.getMovieData.id, text: this.comment})
           .then(response => {
             this.comments.push(response.data);
+            window.scrollTo(0, document.body.scrollHeight || document.documentElement.scrollHeight);
           })
           .catch(error => {
             this.errorMessage = 'Error occurred while creating comment. Please try again.'
@@ -79,6 +81,9 @@ export default {
     },
     replaceImg(e) {
       e.target.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/832px-No-Image-Placeholder.svg.png';
+    },
+    deleteMovie() {
+
     }
   },
   beforeMount() {
