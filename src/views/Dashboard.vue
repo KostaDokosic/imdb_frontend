@@ -5,7 +5,7 @@
   </header>
   <main v-if="getMovies">
     {{!getMovies ? 'There is no movies in database' : ''}}
-
+    <MovieSlider />
     <h1 style="margin-top: 5rem;">Movies</h1>
     <div class="row" v-if="getMovies">
       <Movie v-for="(movie, index) in getMovies" :key="index" :movie-data="movie" />
@@ -20,6 +20,7 @@
 import Movie from '../components/Movie.vue'
 import store from "../store";
 import Multiselect from '@vueform/multiselect';
+import MovieSlider from '../components/MovieSlider.vue';
 
 export default {
   data() {
@@ -67,7 +68,8 @@ export default {
   },
   components: {
     Movie,
-    Multiselect
+    Multiselect,
+    MovieSlider
   },
   computed: {
     getCurrentPage() {

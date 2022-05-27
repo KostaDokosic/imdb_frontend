@@ -5,8 +5,8 @@ import store from './store';
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faThumbsUp, faThumbsDown } from "@fortawesome/free-solid-svg-icons";
-library.add(faThumbsUp, faThumbsDown);
+import { faThumbsUp, faThumbsDown, faStar, faChartLine, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+library.add(faThumbsUp, faThumbsDown, faStar, faChartLine, faMagnifyingGlass);
 
 createApp(App)
 .use(store)

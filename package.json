@@ -15,7 +15,9 @@
     "axios": "^0.27.2",
     "sass": "^1.51.0",
     "vue": "^3.2.33",
+    "vue-debounce": "^4.0.0",
     "vue-router": "^4.0.15",
+    "vue3-autocomplete": "^1.0.4",
     "vuex": "^4.0.2"
   },
   "devDependencies": {

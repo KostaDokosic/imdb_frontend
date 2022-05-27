@@ -1,12 +1,19 @@
 <template>
-  <div class="container">
     <nav>
       <div class="topnav">
-        <router-link to="/dashboard" :class="$route.path === '/dashboard' ? 'active' : ''">Dashboard</router-link>
-        <router-link to="/addmovie" :class="$route.path === '/addmovie' ? 'active' : ''" v-if="$store.getters.isEditor">Add Movie</router-link>
-        <a @click="logout">Logout</a>
+        <div class="container">
+          <div class="nav-grid">
+            <div>
+              <router-link to="/dashboard" :class="$route.path === '/dashboard' ? 'active' : ''">Dashboard</router-link>
+              <router-link to="/addmovie" :class="$route.path === '/addmovie' ? 'active' : ''" v-if="$store.getters.isEditor">Add Movie</router-link>
+              <a @click="logout">Logout</a>
+            </div>
+            <Search />
+          </div>
+        </div>
       </div>
     </nav>
+  <div class="container">
     <main>
       <router-view></router-view>
     </main>
@@ -16,6 +23,7 @@
 <script setup>
 import store from "../store";
 import {useRouter} from "vue-router";
+import Search from '../components/Search.vue';
 const router = useRouter();
 function logout() {
   store.dispatch('logout');
@@ -30,6 +38,15 @@ function logout() {
   overflow: hidden;
   background-color: #131217;
   margin-bottom: 2.5rem;
+}
+
+.nav-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
 }
 
 .topnav a {

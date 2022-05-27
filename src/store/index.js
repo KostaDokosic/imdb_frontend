@@ -6,7 +6,7 @@ const store = createStore({
         user: {
             token: sessionStorage.getItem('TOKEN') ?? null,
             data: JSON.parse(sessionStorage.getItem('USER')),
-            editor: sessionStorage.getItem('EDITOR')
+            editor: sessionStorage.getItem('EDITOR') ?? 0
         },
         infoMessage: '',
         movies: JSON.parse(sessionStorage.getItem('MOVIES')) ?? {
@@ -44,7 +44,7 @@ const store = createStore({
             });
         },
         isEditor(state) {
-            return !!state.user.editor;
+            return parseInt(state.user.editor);
         }
     },
     actions: {
@@ -104,6 +104,12 @@ const store = createStore({
             commit('logout')
             axios.post('/auth/logout')
                 .then(response => commit('logout'))
+        },
+        searchMovie({commit}, search) {
+            return axios.get(`/movies?search=${search}`)
+                .then(response => {
+                    return response.data;
+                })
         }
     },
     mutations: {

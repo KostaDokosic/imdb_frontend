@@ -10,6 +10,7 @@
       <div class="auth__footer">
         <span class="infoMessage" v-if="$store.getters.getInfoMessage">{{ $store.getters.getInfoMessage }}</span>
         <p>IMDb is the world's most popular and authoritative source for movie, TV and celebrity content. Find ratings and reviews for the newest movie and TV shows</p>
+        <router-link :to="$route.path === '/register' ? '/login' : '/register'">{{ $route.path === '/register' ? 'Already have account? Login' : 'No account yet? Create one now!' }}</router-link>
       </div>
     </div>
   </div>
