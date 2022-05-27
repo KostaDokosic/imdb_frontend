@@ -54,7 +54,12 @@ const store = createStore({
                 })
         },
         addMovie({commit}, movieData) {
-            return axios.post(`/movies`, movieData, {headers: {"Content-Type": "multipart/form-data"}})
+            let form = new FormData();
+            form.append('title', movieData.title);
+            form.append('description', movieData.description);
+            form.append('coverImage', movieData.coverImage);
+            form.append('genre_ids[]', movieData.genre_ids);
+            return axios.post('/movies', form, {headers: {"Content-Type": "multipart/form-data"}})
                 .then(response => {
                     return response.data;
                 })

@@ -21,16 +21,19 @@
     <div class="form_group">
       <button type="submit">Add Movie</button>
     </div>
-    <div class="errorMessage" v-if="errorMessage.length" >
-      <p v-for="(message, index) in errorMessage" :key="index">{{message}}</p>
-    </div>
+
+    <teleport to="body">
+      <Modal :title="modal.title" :message="modal.text" @close="modal.open = false" v-if="modal.open" />
+    </teleport>
   </form>
 </template>
 
 <script>
 import store from "../store";
 import {useRouter} from "vue-router";
+import Modal from '../components/Modal.vue';
 const router = useRouter();
+import { ref, unref } from 'vue';
 
 export default {
 
@@ -38,38 +41,55 @@ export default {
     return {
       movie:  {
         title: '',
-        genre_ids: [],
+        genre_ids: ref([]),
         coverImage: {},
-        description: ''
+        description: '',
       },
-      errorMessage: []
+      modal: {
+        open: ref(false),
+        title: '',
+        text: ''
+      }
     }
   },
   methods: {
     addMovie() {
-      store.dispatch('addMovie', this.movie).then((res) => {
-        alert(`${this.movie.title} has been added added.`);
+      if(!store.getters.isEditor) return this.onError('You dont have permissions to add new movie');
+      store.dispatch('addMovie', {title: this.movie.title, genre_ids: Object.values(this.movie.genre_ids), coverImage: this.movie.coverImage, description: this.movie.description}).then((res) => {
+        this.onError(`${this.movie.title} has been added added.`, false, 'Success');
       }).catch(e => {
-        if(e.response && e.response.data && e.response.data.errors) this.onError(e.response?.data?.errors);
+        if(e.response && e.response.data && e.response.data.errors) this.onError(e.response?.data?.errors, true);
+        else {
+          this.onError((e.response.data.message))
+        }
       })
     },
     fileChange(e) {
       this.movie.coverImage = e.target.files.item(0)
     },
-    onError(errors) {
-      this.errorMessage = [];
-      Object.keys(errors)?.forEach(key => {
-        Object.values(errors[key])?.forEach(e => {
-          this.errorMessage.push(e)
-        })
-      });
-      setTimeout(() => this.errorMessage = [], 5000);
+    onError(errors, isArray = false, title = 'Error') {
+      if(isArray) {
+        let errorMessage = [];
+        Object.keys(errors)?.forEach(key => {
+          Object.values(errors[key])?.forEach(e => errorMessage.push(e))
+        });
+        this.alert(title, errorMessage);
+      }
+      this.alert(title, errors);
+    },
+    alert(title, text) {
+      this.modal.text = text;
+      this.modal.title = title;
+      this.modal.open = true;
     }
   },
   computed: {
     getGenres() {
       return store.getters.getGenres
     }
+  },
+  components: {
+    Modal
   }
 }
 </script>
