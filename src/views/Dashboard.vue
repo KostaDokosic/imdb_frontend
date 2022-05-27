@@ -1,22 +1,14 @@
 <template>
   <header>
-    <h4>Filters</h4>
-    <select @change="handleFilterChange" v-model="genreFilter" class="filter" multiple>
-      <option :value="genre" v-for="genre in getGenres">{{genre.name}}</option>
-    </select>
-    <select @change="handleFilterChange" v-model="likeFilter">
-      <option :value="null">Filter by</option>
-      <option value="1">Likes</option>
-      <option value="0">Dislikes</option>
-    </select>
+    <Multiselect v-model="genreFilter.value" v-bind="genreFilter" @select="handleFilterChange" @deselect="handleFilterChange" @clear="clearGenres" placeholder="Genre Filter" />
+    <Multiselect v-model="likeFilter.value" v-bind="likeFilter" @select="handleFilterChange" @deselect="handleFilterChange" @clear="clearLikes" placeholder="Like Filter" />
   </header>
   <main v-if="getMovies">
     {{!getMovies ? 'There is no movies in database' : ''}}
-    <Movie :movie-data="getFeaturedMovie" class="featured" />
-
+    <MovieSlider />
     <h1 style="margin-top: 5rem;">Movies</h1>
-    <div class="row" v-if="$store.state.movies.data">
-      <Movie v-for="(movie, index) in getMovies" :key="index" :movie-data="movie" :v-if="index > 0" />
+    <div class="row" v-if="getMovies">
+      <Movie v-for="(movie, index) in getMovies" :key="index" :movie-data="movie" />
     </div>
     <div class="pagination">
       <span :class="getCurrentPage === i ? 'active' : ''" v-for="i in getTotalPages" @click="changePagination(i)">{{i}}</span>
@@ -27,13 +19,30 @@
 <script>
 import Movie from '../components/Movie.vue'
 import store from "../store";
+import Multiselect from '@vueform/multiselect';
+import MovieSlider from '../components/MovieSlider.vue';
 
 export default {
   data() {
 
     return {
-      genreFilter: [],
-      likeFilter: false
+      genreFilter: {
+        mode: 'tags',
+        value: [],
+        closeOnSelect: false,
+        options: async () => {
+          return await store.getters.getFormattedGenres
+        },
+        searchable: true,
+      },
+      likeFilter: {
+        value: null,
+        closeOnSelect: true,
+        options: [
+          {label: 'Like', value: 1},
+          {label: 'Dislike', value: 0},
+        ]
+      },
     }
   },
   beforeMount() {
@@ -45,16 +54,24 @@ export default {
       store.dispatch('fetchMovies', {page: index});
     },
     handleFilterChange() {
-      store.dispatch('fetchMovies', {page: store.getters.getCurrentPage, genres: this.genreFilter, likeFilter: this.likeFilter})
+      console.log(this.likeFilter.value)
+      store.dispatch('fetchMovies', {page: store.getters.getCurrentPage, genres: this.genreFilter.value.map(g => g), likeFilter: this.likeFilter.value})
+    },
+    clearGenres() {
+      this.genreFilter.value = [];
+      this.handleFilterChange();
+    },
+    clearLikes() {
+      this.likeFilter.value = -1;
+      this.handleFilterChange();
     }
   },
   components: {
-    Movie
+    Movie,
+    Multiselect,
+    MovieSlider
   },
   computed: {
-    getFeaturedMovie() {
-      return store.getters.getFeaturedMovie;
-    },
     getCurrentPage() {
       return store.getters.getCurrentPage;
     },
@@ -73,6 +90,20 @@ export default {
 </script>
 
 <style lang="scss">
+:root {
+  --ms-tag-bg: #07393C;
+  --ms-tag-color: white;
+  --ms-tag-font-weight: 500;
+  --ms-bg: #111014;
+  --ms-ring-color: #111014;
+  --ms-dropdown-bg: #111014;
+  --ms-border-color: #111014;
+  --ms-dropdown-border-color: #111014;
+  --ms-empty-color: #111014;
+  --ms-option-bg-pointed: #07393C;
+  --ms-option-color-pointed: #07393C;
+}
+@import '@vueform/multiselect/themes/default.css';
 .featured {
 
   img {
@@ -84,7 +115,8 @@ export default {
 .row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
+  column-gap: 2rem;
+  row-gap: 4rem;
 
   .movie {
 
@@ -103,20 +135,26 @@ export default {
   margin: 4rem auto;
 
   .active {
-    color: lightgreen !important;
+    color: #2C666E !important;
   }
 
   span {
     font-size: 1.5rem;
+    font-weight: 800;
     &:hover {
       cursor: pointer;
-      color: skyblue;
+      color: #2C666E;
     }
   }
 }
 
-.filter {
-  width: 20rem;
-  margin: 1rem auto;
+.multiselect-tags-search {
+  background: #111014;
+}
+
+header {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
 }
 </style>

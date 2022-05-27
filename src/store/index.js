@@ -8,13 +8,13 @@ const store = createStore({
             data: JSON.parse(sessionStorage.getItem('USER'))
         },
         infoMessage: '',
-        movies: {
+        movies: JSON.parse(sessionStorage.getItem('MOVIES')) ?? {
             meta: {
                 last_page: 0,
                 current_page: 0
             }
         },
-        genres: [],
+        genres: JSON.parse(sessionStorage.getItem('GENRES')),
     },
     getters: {
         getInfoMessage(state) {
@@ -37,9 +37,6 @@ const store = createStore({
         getCurrentPage(state) {
             return state.movies.meta.current_page ?? 0;
         },
-        getFeaturedMovie(state) {
-            return state.movies.data[0];
-        }
     },
     actions: {
         registerUser({commit}, userData) {
@@ -57,18 +54,20 @@ const store = createStore({
                 })
         },
         addMovie({commit}, movieData) {
-            let genres = '';
-            movieData.genre_ids?.forEach(id => genres += `&genre_ids[]=${id}`);
-            return axios.post(`/movies?title=${movieData.title}&description=${movieData.description}&coverImage=${movieData.coverImage}${genres}`)
+            let form = new FormData();
+            form.append('title', movieData.title);
+            form.append('description', movieData.description);
+            form.append('coverImage', movieData.coverImage);
+            form.append('genre_ids[]', movieData.genre_ids);
+            return axios.post('/movies', form, {headers: {"Content-Type": "multipart/form-data"}})
                 .then(response => {
-                    commit('addMovie', movieData)
-                    return response;
+                    return response.data;
                 })
         },
         fetchMovies({commit}, data) {
             let genres = '';
             data.genres?.forEach(genre => genres += `&genre_ids[]=${genre.id}`);
-            axios.get(`/movies?page=${data.page}${genres.length > 0 ? genres : ''}`)
+            axios.get(`/movies?page=${data.page}${genres.length > 0 ? genres : ''}${data.likeFilter ? '&likeFilter=' + data.likeFilter : ''}`)
                 .then(response => {
                     commit('setMovies', response.data)
                 })
@@ -92,9 +91,9 @@ const store = createStore({
                 })
         },
         onLike({commit}, data) {
-            return axios.post('/likes', data)
+            axios.post('/likes', data)
                 .then(response => {
-                    return response.data;
+                    commit('setMovieLike', {response: response.data.data ? response.data.data : response.data, id: data.movie_id})
                 })
         }
     },
@@ -115,15 +114,25 @@ const store = createStore({
             sessionStorage.clear();
         },
         addMovie(state, movieData) {
-            state.movies.push(movieData);
+            state.movies.data.push(movieData);
         },
         setMovies(state, data) {
             state.movies.data = data.data;
             if(data.meta) state.movies.meta = data.meta
             if(!data.meta) state.movies.meta.last_page = 1;
+            sessionStorage.setItem('MOVIES', JSON.stringify(state.movies));
         },
         setGenres(state, data) {
             state.genres = data.data;
+            sessionStorage.setItem('GENRES', JSON.stringify(state.genres));
+        },
+        setMovieLike(state, data) {
+            const movie = state.movies.data.find(movie => movie.id === data.id);
+            if(!movie) return;
+
+            movie.userLike = data.response.like;
+            movie.totalLikes = data.response.totalLikes;
+            movie.totalDislikes = data.response.totalDislikes;
         }
     },
 })

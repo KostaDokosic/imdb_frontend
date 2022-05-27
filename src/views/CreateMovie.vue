@@ -6,13 +6,13 @@
     </div>
     <div class="form_group">
       <label for="genre">Genres</label>
-      <select id="genre" v-model="movie.genre_ids" multiple>
-        <option v-for="genre in $store.getters.getGenres" :key="genre.id" :value="genre.id">{{genre.name}}</option>
+      <select id="genre" v-model="movie.genre_ids" multiple required>
+        <option v-for="genre in getGenres" :key="genre.id" :value="genre.id">{{genre.name}}</option>
       </select>
     </div>
     <div class="form_group">
       <label for="cover-image">Cover Image</label>
-      <input type="text" id="cover-image" placeholder="Movie Title" v-model="movie.coverImage" required />
+      <input type="file" id="cover-image" placeholder="Cover Image" @change="fileChange" accept="image/png, image/jpg" required />
     </div>
     <div class="form_group">
       <label for="description">Title</label>
@@ -21,27 +21,152 @@
     <div class="form_group">
       <button type="submit">Add Movie</button>
     </div>
+
+    <teleport to="body">
+      <Modal :title="modal.title" :message="modal.text" @close="modal.open = false" v-if="modal.open" />
+    </teleport>
   </form>
 </template>
 
-<script setup>
+<script>
 import store from "../store";
+import {useRouter} from "vue-router";
+import Modal from '../components/Modal.vue';
+const router = useRouter();
+import { ref, unref } from 'vue';
 
-const movie = {
-  title: '',
-  genre_ids: [store.getters.getGenres[0].id],
-  coverImage: '',
-  description: ''
-}
-function addMovie() {
-  store.dispatch('addMovie', movie).then((res) => {
-    alert(`${movie.title} has been added added.`);
-  }).catch(e => {
-    alert('Error while creating movie. Please try again...');
-  })
+export default {
+
+  data() {
+    return {
+      movie:  {
+        title: '',
+        genre_ids: ref([]),
+        coverImage: {},
+        description: '',
+      },
+      modal: {
+        open: ref(false),
+        title: '',
+        text: ''
+      }
+    }
+  },
+  methods: {
+    addMovie() {
+      if(!store.getters.isEditor) return this.onError('You dont have permissions to add new movie');
+      store.dispatch('addMovie', {title: this.movie.title, genre_ids: Object.values(this.movie.genre_ids), coverImage: this.movie.coverImage, description: this.movie.description}).then((res) => {
+        this.onError(`${this.movie.title} has been added added.`, false, 'Success');
+      }).catch(e => {
+        if(e.response && e.response.data && e.response.data.errors) this.onError(e.response?.data?.errors, true);
+        else {
+          this.onError((e.response.data.message))
+        }
+      })
+    },
+    fileChange(e) {
+      this.movie.coverImage = e.target.files.item(0)
+    },
+    onError(errors, isArray = false, title = 'Error') {
+      if(isArray) {
+        let errorMessage = [];
+        Object.keys(errors)?.forEach(key => {
+          Object.values(errors[key])?.forEach(e => errorMessage.push(e))
+        });
+        this.alert(title, errorMessage);
+      }
+      this.alert(title, errors);
+    },
+    alert(title, text) {
+      this.modal.text = text;
+      this.modal.title = title;
+      this.modal.open = true;
+    }
+  },
+  computed: {
+    getGenres() {
+      return store.getters.getGenres
+    }
+  },
+  components: {
+    Modal
+  }
 }
 </script>
 
-<style scoped>
-@import "../assets/forms.scss";
+<style lang="scss" scoped>
+.form_group {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+label {
+  text-align: left;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: .25rem;
+}
+
+  textarea {
+    outline: none;
+    border: 1px solid black;
+    padding: .5rem 1rem;
+    background-color: #111014 !important;
+    color: white;
+  }
+
+input {
+  outline: none;
+  border: 1px solid black;
+  padding: .5rem 1rem;
+  background-color: #111014 !important;
+  color: white;
+}
+  select {
+    border: black;
+    outline: none;
+
+    &:focus {
+      background: #07393C;
+    }
+    option {
+      padding: 1rem;
+      background: #111014;
+
+      &:checked, &:focus, &:active, &:hover {
+        background: #07393C !important;
+      }
+    }
+  }
+
+button {
+  box-shadow: none;
+  background: #111014;
+  outline: none;
+  border: 1px solid black;
+  color: white;
+  padding: .5rem 1rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 1.25rem;
+  transition: all .25s ease-in-out;
+
+  &:hover {
+    background: #07393C;
+    cursor: pointer;
+  }
+}
+}
+
+.errorMessage {
+  color: white;
+  background: tomato;
+  padding: .5rem 1rem;
+  text-align: center;
+  margin: 2rem auto;
+  white-space: pre-line;
+  word-break: break-word;
+  font-family: inherit;
+}
 </style>
