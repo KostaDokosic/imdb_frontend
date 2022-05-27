@@ -32,6 +32,12 @@
 import store from "../store";
 export default {
   props: ['movieData'],
+  data() {
+
+    return {
+      errorMessage: ''
+    }
+  },
   methods: {
     onLike(state, event) {
       event.stopPropagation();
